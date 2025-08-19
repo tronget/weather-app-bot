@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"os"
 )
@@ -11,6 +12,10 @@ func GetUpdate() tgbotapi.UpdateConfig {
 	return updateConfig
 }
 
-func GetToken() string {
-	return os.Getenv("TELEGRAM_TOKENAPI")
+func GetToken() (string, error) {
+	token := os.Getenv("TELEGRAM_TOKENAPI")
+	if token == "" {
+		return "", errors.New("TELEGRAM_TOKENAPI not set")
+	}
+	return token, nil
 }

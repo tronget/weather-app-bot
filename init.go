@@ -6,7 +6,10 @@ import (
 )
 
 func InitBot() (*tgbotapi.BotAPI, error) {
-	token := config.GetToken()
+	token, err := config.GetToken()
+	if err != nil {
+		return nil, err
+	}
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		return nil, err
