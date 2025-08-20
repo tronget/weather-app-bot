@@ -6,7 +6,7 @@ import (
 )
 
 func InitBot() (*tgbotapi.BotAPI, error) {
-	token, err := config.GetToken()
+	token, err := config.GetTelegramToken()
 	if err != nil {
 		return nil, err
 	}

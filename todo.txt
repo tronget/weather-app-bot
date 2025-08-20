@@ -1,0 +1,2 @@
+TODO: --Implement ResponseWriter interface in order to write right into telegram chat
+TODO: --Create struct to serialize weather JSON
