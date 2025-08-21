@@ -7,15 +7,21 @@ import (
 	"strings"
 )
 
-//type Main struct {
-//	Weather `json:"weather"`
-//	Name    string `json:"name"`
-//}
-//
-//type Weather struct {
-//	Description string `json:"description"`
-//	IconID      string `json:"icon"`
-//}
+type Main struct {
+	WeatherList []Weather `json:"weather"`
+	Name        string    `json:"name"`
+	Temperature `json:"main"`
+}
+
+type Weather struct {
+	Description string `json:"description"`
+	IconID      string `json:"icon"`
+}
+
+type Temperature struct {
+	Temp      float32 `json:"temp"`
+	FeelsLike float32 `json:""`
+}
 
 func GetWeather(city string) error {
 	return nil
@@ -33,4 +39,8 @@ func RequestWeatherURL(cityName string) (string, error) {
 	fmt.Println(cityName)
 	address := fmt.Sprintf(addressFormat, cityName, token)
 	return address, nil
+}
+
+func IconIdToPngPath(iconID string) string {
+	return ""
 }
