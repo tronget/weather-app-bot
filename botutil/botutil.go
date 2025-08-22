@@ -8,11 +8,8 @@ import (
 	"log"
 )
 
-func Init() (*tgbotapi.BotAPI, error) {
-	token, err := config.GetTelegramToken()
-	if err != nil {
-		return nil, err
-	}
+func Init(cfg *config.Config) (*tgbotapi.BotAPI, error) {
+	token := cfg.TelegramToken()
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		return nil, fmt.Errorf("creating new bot api: %w", err)
@@ -20,7 +17,7 @@ func Init() (*tgbotapi.BotAPI, error) {
 	return bot, nil
 }
 
-func GetReplyMessage(update *tgbotapi.Update) string {
+func GetReplyMessage(update *tgbotapi.Update, cfg *config.Config) string {
 	messageText := update.Message.Text
 	var replyMessageText string
 
@@ -31,7 +28,7 @@ func GetReplyMessage(update *tgbotapi.Update) string {
 		command := update.Message.Command()
 		replyMessageText = commands.Handle(command)
 	default:
-		replyMessageText = commands.HandleDefault(messageText)
+		replyMessageText = commands.HandleDefault(messageText, cfg)
 	}
 
 	return replyMessageText
@@ -45,7 +42,7 @@ func SendMessage(bot *tgbotapi.BotAPI, msg *tgbotapi.MessageConfig, update *tgbo
 	}
 }
 
-func HandleMessages(bot *tgbotapi.BotAPI, updateConfig tgbotapi.UpdateConfig) {
+func HandleMessages(bot *tgbotapi.BotAPI, updateConfig tgbotapi.UpdateConfig, cfg *config.Config) {
 	updates := bot.GetUpdatesChan(updateConfig)
 
 	for update := range updates {
@@ -56,7 +53,7 @@ func HandleMessages(bot *tgbotapi.BotAPI, updateConfig tgbotapi.UpdateConfig) {
 		chatID := update.Message.Chat.ID
 		msg := tgbotapi.NewMessage(chatID, "")
 
-		msg.Text = GetReplyMessage(&update)
+		msg.Text = GetReplyMessage(&update, cfg)
 
 		SendMessage(bot, &msg, &update)
 	}

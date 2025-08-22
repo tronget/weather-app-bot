@@ -1,32 +1,38 @@
 package server
 
-//http.HandleFunc("/webhook", func(w http.ResponseWriter, r *http.Request) {
-//
-//	switch r.Method {
-//	case http.MethodGet:
-//		jsn, err := json.Marshal(data)
-//		if err != nil {
-//			msg := "Internal server error: unable to marshal json"
-//			log.Println(msg)
-//			http.Error(w, msg, http.StatusInternalServerError)
-//			return
-//		}
-//		w.Write(jsn)
-//	case http.MethodPost:
-//		bodyBytes, err := io.ReadAll(r.Body)
-//		if err != nil {
-//			log.Println(err)
-//			http.Error(w, "Error reading request body", http.StatusBadRequest)
-//		}
-//		defer r.Body.Close()
-//
-//		rd := RequestData{}
-//		if err := json.Unmarshal(bodyBytes, &rd); err != nil {
-//
-//		}
-//		log.Println(rd)
-//	default:
-//		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-//	}
-//})
-//log.Fatal(http.ListenAndServe(":8080", nil))
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/tronget/weather-app-bot/config"
+	"github.com/tronget/weather-app-bot/pkg/api"
+	"github.com/tronget/weather-app-bot/weather/models"
+	"io"
+	"net/http"
+)
+
+func GetCities(cityName string, cfg *config.Config) ([]models.City, error) {
+	url := api.RequestCityCoordinatesURL(cityName, cfg)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("sending GET request to take city info: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("response status code is not OK: %s", resp.Status)
+	}
+
+	jsonBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("reading response body: %v", err)
+	}
+
+	var data []models.City
+	err = json.Unmarshal(jsonBytes, &data)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshalling response body to JSON: %v", err)
+	}
+
+	return data, nil
+}

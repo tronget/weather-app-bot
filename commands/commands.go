@@ -1,8 +1,10 @@
 package commands
 
 import (
-	"fmt"
-	"github.com/tronget/weather-app-bot/weather"
+	"errors"
+	"github.com/tronget/weather-app-bot/config"
+	"github.com/tronget/weather-app-bot/ierrors"
+	"github.com/tronget/weather-app-bot/weather/service"
 )
 
 func Handle(command string) string {
@@ -22,19 +24,19 @@ For example, New York`
 	return replyMessageText
 }
 
-func HandleDefault(messageText string) string {
-	cities, err := weather.GetCity(messageText)
+func HandleDefault(messageText string, cfg *config.Config) string {
+	cityName, err := service.GetCorrectCityName(messageText, cfg)
 
 	var replyMessageText string
+	var cityNotFoundError *ierrors.CityNotFoundError
 
 	switch {
+	case errors.As(err, &cityNotFoundError):
+		replyMessageText = err.Error()
 	case err != nil:
 		replyMessageText = "Error occurred during request. Sorry, maybe we have some problems.\n" + err.Error()
-	case len(cities) == 0:
-		replyMessageText = fmt.Sprintf("City \"%s\" not found.", messageText)
 	default:
-		city := cities[0]
-		replyMessageText = fmt.Sprintf("%s\n%f : %f, ", city.Name, city.Lon, city.Lat)
+		replyMessageText = cityName
 	}
 
 	return replyMessageText
