@@ -6,6 +6,7 @@ import (
 	"github.com/tronget/weather-app-bot/commands"
 	"github.com/tronget/weather-app-bot/config"
 	"log"
+	"strings"
 )
 
 func Init(cfg *config.Config) (*tgbotapi.BotAPI, error) {
@@ -17,7 +18,7 @@ func Init(cfg *config.Config) (*tgbotapi.BotAPI, error) {
 	return bot, nil
 }
 
-func GetReplyMessage(update *tgbotapi.Update, cfg *config.Config) string {
+func HandleMsg(cfg *config.Config, update *tgbotapi.Update, msgConfig *tgbotapi.MessageConfig) {
 	messageText := update.Message.Text
 	var replyMessageText string
 
@@ -25,13 +26,13 @@ func GetReplyMessage(update *tgbotapi.Update, cfg *config.Config) string {
 	case messageText == "":
 		replyMessageText = "PLS, send me a text message with the name of the place bro.."
 	case update.Message.IsCommand():
-		command := update.Message.Command()
-		replyMessageText = commands.Handle(command)
+		commandName := update.Message.Command()
+		replyMessageText = commands.Handle(msgConfig, commandName)
 	default:
-		replyMessageText = commands.HandleDefault(messageText, cfg)
+		replyMessageText = commands.HandleDefault(update, cfg)
 	}
 
-	return replyMessageText
+	msgConfig.Text = replyMessageText
 }
 
 func SendMessage(bot *tgbotapi.BotAPI, msg *tgbotapi.MessageConfig, update *tgbotapi.Update) {
@@ -46,16 +47,40 @@ func HandleMessages(bot *tgbotapi.BotAPI, updateConfig tgbotapi.UpdateConfig, cf
 	updates := bot.GetUpdatesChan(updateConfig)
 
 	for update := range updates {
-		if update.Message == nil {
-			continue
+		if update.Message != nil {
+			chatID := update.Message.Chat.ID
+			msgConfig := tgbotapi.NewMessage(chatID, "")
+
+			HandleMsg(cfg, &update, &msgConfig)
+
+			SendMessage(bot, &msgConfig, &update)
+
+		} else if callback := update.CallbackQuery; callback != nil {
+			HandleCallback(bot, callback, cfg)
+		}
+	}
+}
+
+func HandleCallback(bot *tgbotapi.BotAPI, callback *tgbotapi.CallbackQuery, cfg *config.Config) {
+	if strings.HasPrefix(callback.Data, "lang_") {
+		lang := strings.TrimPrefix(callback.Data, "lang_")
+
+		// TODO: save lang in database, not in-memory
+		cfg.SetUserLanguage(callback.From.ID, lang)
+
+		// Respond to the callback query, telling Telegram to show the user
+		// a message with the data received.
+		newCallback := tgbotapi.NewCallback(callback.ID, "Language is chosen")
+		if _, err := bot.Request(newCallback); err != nil {
+			log.Printf("accepting callback: %v", err)
 		}
 
-		chatID := update.Message.Chat.ID
-		msg := tgbotapi.NewMessage(chatID, "")
-
-		msg.Text = GetReplyMessage(&update, cfg)
-
-		SendMessage(bot, &msg, &update)
+		text := fmt.Sprintf("✅ Language is saved: %s", lang)
+		chatID := callback.Message.Chat.ID
+		editMessage := tgbotapi.NewEditMessageText(chatID, callback.Message.MessageID, text)
+		if _, err := bot.Send(editMessage); err != nil {
+			log.Println("sending edited message:", err)
+		}
 	}
 }
 

@@ -10,7 +10,7 @@ import (
 func GetCorrectCityName(cityName string, cfg *config.Config) (string, error) {
 	cities, err := server.GetCities(cityName, cfg)
 	if err != nil {
-		return "", fmt.Errorf("getting coordinates of city: %v", err)
+		return "", fmt.Errorf("getting correct city name during request: %w", err)
 	}
 
 	if len(cities) == 0 {

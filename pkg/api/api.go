@@ -16,12 +16,12 @@ func RequestCityCoordinatesURL(cityName string, cfg *config.Config) string {
 	return address
 }
 
-func RequestWeatherURL(cityName string, cfg *config.Config) string {
+func RequestWeatherURL(cityName string, cfg *config.Config, lang string) string {
 	addressFormat := config.WEATHER_REQUEST_URL
 	token := cfg.WeatherToken()
 
 	// replace spaces to make correct request
 	cityName = strings.ReplaceAll(cityName, " ", "%20")
-	address := fmt.Sprintf(addressFormat, cityName, token)
+	address := fmt.Sprintf(addressFormat, cityName, token, lang)
 	return address
 }
