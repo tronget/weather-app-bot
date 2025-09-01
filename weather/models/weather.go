@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -49,9 +50,68 @@ func (s *Sys) UnmarshalJSON(b []byte) error {
 
 	s.Country = tempSys.Country
 
-	//offset := time.FixedZone("local")
 	s.Sunrise = time.Unix(tempSys.SunriseUnix, 0).UTC()
 	s.Sunset = time.Unix(tempSys.SunsetUnix, 0).UTC()
 
 	return nil
+}
+
+func (weather *Weather) BuildMessage() string {
+	weatherDesc := "Нет данных"
+	weatherEmoji := "🌤️"
+	if len(weather.DescriptionList) > 0 {
+		weatherDesc = weather.DescriptionList[0].Description
+		weatherEmoji = iconIDToEmoji(weather.DescriptionList[0].IconID)
+	}
+
+	loc := time.FixedZone("local", weather.TimeZone)
+	sunrise := weather.Sys.Sunrise.In(loc).Format("15:04")
+	sunset := weather.Sys.Sunset.In(loc).Format("15:04")
+
+	msg := fmt.Sprintf(
+		"🌍 %s, %s\n"+
+			"%s %s\n"+
+			"🌡️ Температура: %.1f°C (ощущается как %.1f°C)\n"+
+			"💨 Ветер: %.1f м/с\n"+
+			"🌅 Восход: %s\n"+
+			"🌇 Закат: %s",
+		weather.CityName, weather.Sys.Country,
+		weatherEmoji, weatherDesc,
+		weather.Temperature.Temp, weather.Temperature.FeelsLike,
+		weather.Wind.Speed,
+		sunrise, sunset,
+	)
+
+	return msg
+}
+
+func iconIDToEmoji(code string) string {
+	switch code {
+	case "01d":
+		return "☀️"
+	case "01n":
+		return "🌑"
+	case "02d":
+		return "🌤️"
+	case "02n":
+		return "☁️🌙"
+	case "03d", "03n":
+		return "☁️"
+	case "04d", "04n":
+		return "☁️☁️"
+	case "09d", "09n":
+		return "🌧️"
+	case "10d":
+		return "🌦️"
+	case "10n":
+		return "🌧️🌙"
+	case "11d", "11n":
+		return "⛈️"
+	case "13d", "13n":
+		return "❄️"
+	case "50d", "50n":
+		return "🌫️"
+	default:
+		return "❔"
+	}
 }

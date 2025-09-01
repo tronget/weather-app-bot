@@ -2,22 +2,22 @@ package commands
 
 import (
 	"errors"
-	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/tronget/weather-app-bot/config"
 	"github.com/tronget/weather-app-bot/ierrors"
-	"github.com/tronget/weather-app-bot/weather/models"
+	"github.com/tronget/weather-app-bot/locales"
 	"github.com/tronget/weather-app-bot/weather/service"
 	"log"
-	"time"
 )
 
-func Handle(msgConfig *tgbotapi.MessageConfig, commandName string) string {
+func Handle(commandName string, msgConfig *tgbotapi.MessageConfig, lang string) string {
 	var replyMessageText string
 
 	switch commandName {
-	case "start", "help":
-		replyMessageText = start()
+	case "start":
+		replyMessageText = start(lang)
+	case "help":
+		replyMessageText = help(lang)
 	case "language":
 		replyMessageText = language(msgConfig)
 	default:
@@ -27,11 +27,12 @@ func Handle(msgConfig *tgbotapi.MessageConfig, commandName string) string {
 	return replyMessageText
 }
 
-func start() string {
-	return `This is simple weather bot!
-You can rapidly get information about weather all around the world!
-Simply enter the name of the place where you want to know the weather.
-For example, New York`
+func start(lang string) string {
+	return locales.Translate(locales.START_MESSAGE, lang)
+}
+
+func help(lang string) string {
+	return locales.Translate(locales.HELP_MESSAGE, lang)
 }
 
 func language(msgConfig *tgbotapi.MessageConfig) string {
@@ -61,69 +62,13 @@ func HandleDefault(update *tgbotapi.Update, cfg *config.Config) string {
 			log.Printf("Error occurred during user request: %v", err)
 			break
 		}
-		replyMessageText = BuildWeatherMessage(weather) // TODO: implement better
+		replyMessageText = weather.BuildMessage()
+	}
+
+	// Trim message if it's too long
+	if len(replyMessageText) > 4096 {
+		replyMessageText = replyMessageText[:4093] + "..."
 	}
 
 	return replyMessageText
-}
-
-func BuildWeatherMessage(weather *models.Weather) string {
-
-	weatherDesc := "Нет данных"
-	weatherEmoji := "🌤️"
-	if len(weather.DescriptionList) > 0 {
-		weatherDesc = weather.DescriptionList[0].Description
-		weatherEmoji = iconCodeToEmoji(weather.DescriptionList[0].IconID)
-	}
-
-	loc := time.FixedZone("local", weather.TimeZone)
-	sunrise := weather.Sys.Sunrise.In(loc).Format("15:04")
-	sunset := weather.Sys.Sunset.In(loc).Format("15:04")
-
-	msg := fmt.Sprintf(
-		"🌍 %s, %s\n"+
-			"%s %s\n"+
-			"🌡️ Температура: %.1f°C (ощущается как %.1f°C)\n"+
-			"💨 Ветер: %.1f м/с\n"+
-			"🌅 Восход: %s\n"+
-			"🌇 Закат: %s",
-		weather.CityName, weather.Sys.Country,
-		weatherEmoji, weatherDesc,
-		weather.Temperature.Temp, weather.Temperature.FeelsLike,
-		weather.Wind.Speed,
-		sunrise, sunset,
-	)
-
-	return msg
-}
-
-func iconCodeToEmoji(code string) string {
-	switch code {
-	case "01d":
-		return "☀️" // clear sky day
-	case "01n":
-		return "🌑" // clear sky night
-	case "02d":
-		return "🌤️" // few clouds day
-	case "02n":
-		return "☁️🌙" // few clouds night
-	case "03d", "03n":
-		return "☁️" // scattered clouds
-	case "04d", "04n":
-		return "☁️☁️" // broken clouds
-	case "09d", "09n":
-		return "🌧️" // shower rain
-	case "10d":
-		return "🌦️" // rain day
-	case "10n":
-		return "🌧️🌙" // rain night
-	case "11d", "11n":
-		return "⛈️" // thunderstorm
-	case "13d", "13n":
-		return "❄️" // snow
-	case "50d", "50n":
-		return "🌫️" // mist
-	default:
-		return "❔" // unknown
-	}
 }

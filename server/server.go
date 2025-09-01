@@ -13,14 +13,9 @@ import (
 func GetCities(cityName string, cfg *config.Config) ([]models.City, error) {
 	url := api.RequestCityCoordinatesURL(cityName, cfg)
 
-	jsonBytes, err := getResponseBody(url)
+	data, err := getData[[]models.City](url)
 	if err != nil {
 		return nil, err
-	}
-
-	var data []models.City
-	if err := json.Unmarshal(jsonBytes, &data); err != nil {
-		return nil, fmt.Errorf("unmarshaling response body to JSON: %w", err)
 	}
 
 	return data, nil
@@ -29,20 +24,12 @@ func GetCities(cityName string, cfg *config.Config) ([]models.City, error) {
 func GetWeatherInfo(cityName string, cfg *config.Config, lang string) (*models.Weather, error) {
 	url := api.RequestWeatherURL(cityName, cfg, lang)
 
-	jsonBytes, err := getResponseBody(url)
+	data, err := getData[models.Weather](url)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println(string(jsonBytes))
-
-	data := new(models.Weather)
-
-	if err := json.Unmarshal(jsonBytes, data); err != nil {
-		return nil, fmt.Errorf("unmarshaling weather info to JSON: %w", err)
-	}
-
-	return data, nil
+	return &data, nil
 }
 
 func getResponseBody(url string) ([]byte, error) {
@@ -68,12 +55,12 @@ func getData[T any](url string) (T, error) {
 
 	jsonBytes, err := getResponseBody(url)
 	if err != nil {
-		return zero, err
+		return zero, fmt.Errorf("%s getting response body: %w", url, err)
 	}
 
 	var data T
-	if err := json.Unmarshal(jsonBytes, data); err != nil {
-		return zero, fmt.Errorf("unmarshaling response body bytes to JSON: %w", err)
+	if err = json.Unmarshal(jsonBytes, &data); err != nil {
+		return zero, fmt.Errorf("%s unmarshaling response body bytes to JSON: %w", url, err)
 	}
 
 	return data, nil

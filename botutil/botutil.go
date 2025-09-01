@@ -5,6 +5,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/tronget/weather-app-bot/commands"
 	"github.com/tronget/weather-app-bot/config"
+	"github.com/tronget/weather-app-bot/locales"
 	"log"
 	"strings"
 )
@@ -20,14 +21,22 @@ func Init(cfg *config.Config) (*tgbotapi.BotAPI, error) {
 
 func HandleMsg(cfg *config.Config, update *tgbotapi.Update, msgConfig *tgbotapi.MessageConfig) {
 	messageText := update.Message.Text
+
+	userLang := cfg.UserLanguage(update.Message.From.ID)
+	fmt.Println(userLang)
+	if userLang == "" {
+		userLang = update.Message.From.LanguageCode
+		cfg.SetUserLanguage(update.Message.From.ID, userLang)
+	}
+
 	var replyMessageText string
 
 	switch {
 	case messageText == "":
-		replyMessageText = "PLS, send me a text message with the name of the place bro.."
+		replyMessageText = locales.Translate(locales.EMPTY_MESSAGE, userLang)
 	case update.Message.IsCommand():
 		commandName := update.Message.Command()
-		replyMessageText = commands.Handle(msgConfig, commandName)
+		replyMessageText = commands.Handle(commandName, msgConfig, userLang)
 	default:
 		replyMessageText = commands.HandleDefault(update, cfg)
 	}

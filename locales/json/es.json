@@ -1,0 +1,5 @@
+{
+  "empty_message": "Pls, envíame un mensaje de texto con el nombre del lugar, hermano..",
+  "start_message": "¡Este es un bot meteorológico simple!\n¡Puedes obtener rápidamente información sobre el clima en todo el mundo!\nSimplemente ingresa el nombre del lugar donde deseas conocer el clima.\nPor ejemplo, Madrid",
+  "help_message": "Comandos disponibles:\n/start - iniciar el bot\n/help - mostrar comandos disponibles\n/language - elegir tu idioma"
+}
