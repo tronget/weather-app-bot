@@ -4,6 +4,13 @@ const (
 	LANG_EN = "en"
 	LANG_RU = "ru"
 	LANG_ES = "es"
+	LANG_DE = "de"
+	LANG_FR = "fr"
+	LANG_IT = "it"
+	LANG_PT = "pt"
+	LANG_ZH = "zh"
+	LANG_SV = "sv"
+	LANG_FI = "fi"
 )
 
 const (
@@ -11,9 +18,22 @@ const (
 	UNKNOWN_CMD    = "unknown_command"
 	START_MESSAGE  = "start_message"
 	HELP_MESSAGE   = "help_message"
-	WEATHER        = "weather"
-	SET_LANG       = "set_language"
-	LANG_SET       = "language_set"
+	CHOOSE_LANG    = "choose_language"
+	LANG_CHOSEN    = "language_chosen"
+	LANG_SAVED     = "language_saved"
 	CITY_NOT_FOUND = "city_not_found"
-	ERROR          = "error"
+	ERROR_MESSAGE  = "error_message"
+	NO_DATA        = "no_data"
+	TEMPERATURE    = "temperature"
+	FEELS_LIKE     = "feels_like"
+	WIND           = "wind"
+	SUNRISE        = "sunrise"
+	SUNSET         = "sunset"
+
+	WEATHER_MSG_FORMAT = "🌍 %s, %s\n" +
+		"%s %s\n" +
+		"🌡️ %s: %.1f°C (%s %.1f°C)\n" +
+		"💨 %s: %.1f\n" +
+		"🌅 %s: %s\n" +
+		"🌇 %s: %s"
 )

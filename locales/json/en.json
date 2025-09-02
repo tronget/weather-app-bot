@@ -1,5 +1,17 @@
 {
   "empty_message": "PLS, send me a text message with the name of the place bro..",
   "start_message": "This is simple weather bot!\nYou can rapidly get information about weather all around the world!\nSimply enter the name of the place where you want to know the weather.\nFor example, New York",
-  "help_message": "Available commands:\n/start - start the bot\n/help - show available commands\n/language - choose your language"
+  "help_message": "Available commands:\n/start - start the bot\n/help - show available commands\n/language - choose your language",
+  "unknown_command": "I don't know that command :(",
+  "choose_language": "Choose language:",
+  "language_chosen": "Language is chosen",
+  "language_saved": "✅ Language is saved: %s",
+  "error_message": "Error occurred during request. Be sure you passed correct city name.",
+  "city_not_found": "City \"%s\" not found.",
+  "no_data": "No data",
+  "temperature": "Temperature",
+  "feels_like": "feels like",
+  "wind": "Wind",
+  "sunrise": "Sunrise",
+  "sunset": "Sunset"
 }

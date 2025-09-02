@@ -38,7 +38,7 @@ func HandleMsg(cfg *config.Config, update *tgbotapi.Update, msgConfig *tgbotapi.
 		commandName := update.Message.Command()
 		replyMessageText = commands.Handle(commandName, msgConfig, userLang)
 	default:
-		replyMessageText = commands.HandleDefault(update, cfg)
+		replyMessageText = commands.HandleDefault(update, cfg, userLang)
 	}
 
 	msgConfig.Text = replyMessageText
@@ -79,12 +79,16 @@ func HandleCallback(bot *tgbotapi.BotAPI, callback *tgbotapi.CallbackQuery, cfg 
 
 		// Respond to the callback query, telling Telegram to show the user
 		// a message with the data received.
-		newCallback := tgbotapi.NewCallback(callback.ID, "Language is chosen")
+		callbackMsg := locales.Translate(locales.LANG_CHOSEN, lang)
+		newCallback := tgbotapi.NewCallback(callback.ID, callbackMsg)
 		if _, err := bot.Request(newCallback); err != nil {
 			log.Printf("accepting callback: %v", err)
 		}
 
-		text := fmt.Sprintf("✅ Language is saved: %s", lang)
+		// text for edited message from bot
+		formatString := locales.Translate(locales.LANG_SAVED, lang)
+		text := fmt.Sprintf(formatString, lang)
+
 		chatID := callback.Message.Chat.ID
 		editMessage := tgbotapi.NewEditMessageText(chatID, callback.Message.MessageID, text)
 		if _, err := bot.Send(editMessage); err != nil {

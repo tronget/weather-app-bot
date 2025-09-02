@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/tronget/weather-app-bot/locales"
 	"time"
 )
 
@@ -56,8 +57,8 @@ func (s *Sys) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (weather *Weather) BuildMessage() string {
-	weatherDesc := "Нет данных"
+func (weather *Weather) BuildMessage(lang string) string {
+	weatherDesc := locales.Translate(locales.NO_DATA, lang)
 	weatherEmoji := "🌤️"
 	if len(weather.DescriptionList) > 0 {
 		weatherDesc = weather.DescriptionList[0].Description
@@ -69,17 +70,19 @@ func (weather *Weather) BuildMessage() string {
 	sunset := weather.Sys.Sunset.In(loc).Format("15:04")
 
 	msg := fmt.Sprintf(
-		"🌍 %s, %s\n"+
-			"%s %s\n"+
-			"🌡️ Температура: %.1f°C (ощущается как %.1f°C)\n"+
-			"💨 Ветер: %.1f м/с\n"+
-			"🌅 Восход: %s\n"+
-			"🌇 Закат: %s",
+		locales.WEATHER_MSG_FORMAT,
 		weather.CityName, weather.Sys.Country,
 		weatherEmoji, weatherDesc,
-		weather.Temperature.Temp, weather.Temperature.FeelsLike,
+		locales.Translate(locales.TEMPERATURE, lang),
+		weather.Temperature.Temp,
+		locales.Translate(locales.FEELS_LIKE, lang),
+		weather.Temperature.FeelsLike,
+		locales.Translate(locales.WIND, lang),
 		weather.Wind.Speed,
-		sunrise, sunset,
+		locales.Translate(locales.SUNRISE, lang),
+		sunrise,
+		locales.Translate(locales.SUNSET, lang),
+		sunset,
 	)
 
 	return msg

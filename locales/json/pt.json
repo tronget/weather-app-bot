@@ -1,0 +1,17 @@
+{
+  "empty_message": "Por favor, envie-me uma mensagem de texto com o nome do lugar, amigo..",
+  "start_message": "Este é um bot de clima simples!\nVocê pode obter rapidamente informações sobre o clima em todo o mundo!\nBasta digitar o nome do lugar onde você quer saber o clima.\nPor exemplo, Lisboa",
+  "help_message": "Comandos disponíveis:\n/start - iniciar o bot\n/help - mostrar comandos disponíveis\n/language - escolher seu idioma",
+  "unknown_command": "Eu não conheço esse comando :(",
+  "choose_language": "Escolha o idioma:",
+  "language_chosen": "Idioma escolhido",
+  "language_saved": "✅ Idioma salvo: %s",
+  "error_message": "Ocorreu um erro durante a solicitação. Certifique-se de ter inserido o nome correto da cidade.",
+  "city_not_found": "Cidade \"%s\" não encontrada.",
+  "no_data": "Sem dados",
+  "temperature": "Temperatura",
+  "feels_like": "sensação térmica",
+  "wind": "Vento",
+  "sunrise": "Nascer do sol",
+  "sunset": "Pôr do sol"
+}

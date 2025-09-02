@@ -1,0 +1,17 @@
+{
+  "empty_message": "Lähetä minulle tekstiviesti paikan nimellä, kaveri..",
+  "start_message": "Tämä on yksinkertainen sääbotti!\nVoit nopeasti saada tietoa säästä ympäri maailmaa!\nKirjoita vain paikan nimi, josta haluat tietää sään.\nEsimerkiksi Helsinki",
+  "help_message": "Saatavilla olevat komennot:\n/start - käynnistä botti\n/help - näytä saatavilla olevat komennot\n/language - valitse kieli",
+  "unknown_command": "En tunne tuota komentoa :(",
+  "choose_language": "Valitse kieli:",
+  "language_chosen": "Kieli valittu",
+  "language_saved": "✅ Kieli tallennettu: %s",
+  "error_message": "Pyyntöä suorittaessa tapahtui virhe. Varmista, että annoit oikean kaupungin nimen.",
+  "city_not_found": "Kaupunkia \"%s\" ei löytynyt.",
+  "no_data": "Ei tietoja",
+  "temperature": "Lämpötila",
+  "feels_like": "tuntuu kuin",
+  "wind": "Tuuli",
+  "sunrise": "Auringonnousu",
+  "sunset": "Auringonlasku"
+}

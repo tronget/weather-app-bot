@@ -1,5 +1,17 @@
 {
   "empty_message": "Pls, envíame un mensaje de texto con el nombre del lugar, hermano..",
   "start_message": "¡Este es un bot meteorológico simple!\n¡Puedes obtener rápidamente información sobre el clima en todo el mundo!\nSimplemente ingresa el nombre del lugar donde deseas conocer el clima.\nPor ejemplo, Madrid",
-  "help_message": "Comandos disponibles:\n/start - iniciar el bot\n/help - mostrar comandos disponibles\n/language - elegir tu idioma"
+  "help_message": "Comandos disponibles:\n/start - iniciar el bot\n/help - mostrar comandos disponibles\n/language - elegir tu idioma",
+  "unknown_command": "No conozco ese comando :(",
+  "choose_language": "Elige idioma:",
+  "language_chosen": "Idioma elegido",
+  "language_saved": "✅ Idioma guardado: %s",
+  "error_message": "Ocurrió un error durante la solicitud. Asegúrate de haber ingresado el nombre correcto de la ciudad.",
+  "city_not_found": "Ciudad \"%s\" no encontrada.",
+  "no_data": "Sin datos",
+  "temperature": "Temperatura",
+  "feels_like": "se siente como",
+  "wind": "Viento",
+  "sunrise": "Amanecer",
+  "sunset": "Atardecer"
 }

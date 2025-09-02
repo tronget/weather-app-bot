@@ -1,0 +1,17 @@
+{
+  "empty_message": "Bitte sende mir eine Textnachricht mit dem Namen des Ortes, Bruder..",
+  "start_message": "Das ist ein einfacher Wetter-Bot!\nDu kannst schnell Informationen über das Wetter weltweit erhalten!\nGib einfach den Namen des Ortes ein, für den du das Wetter wissen möchtest.\nZum Beispiel, Berlin",
+  "help_message": "Verfügbare Befehle:\n/start - starte den Bot\n/help - zeige verfügbare Befehle\n/language - wähle deine Sprache",
+  "unknown_command": "Ich kenne diesen Befehl nicht :(",
+  "choose_language": "Sprache wählen:",
+  "language_chosen": "Sprache gewählt",
+  "language_saved": "✅ Sprache gespeichert: %s",
+  "error_message": "Bei der Anfrage ist ein Fehler aufgetreten. Stelle sicher, dass du den richtigen Stadtnamen eingegeben hast.",
+  "city_not_found": "Stadt \"%s\" nicht gefunden.",
+  "no_data": "Keine Daten",
+  "temperature": "Temperatur",
+  "feels_like": "fühlt sich an wie",
+  "wind": "Wind",
+  "sunrise": "Sonnenaufgang",
+  "sunset": "Sonnenuntergang"
+}

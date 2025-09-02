@@ -1,0 +1,17 @@
+{
+  "empty_message": "Skicka mig ett textmeddelande med platsens namn, kompis..",
+  "start_message": "Det här är en enkel väderbot!\nDu kan snabbt få information om vädret över hela världen!\nSkriv bara in namnet på platsen där du vill veta vädret.\nTill exempel, Stockholm",
+  "help_message": "Tillgängliga kommandon:\n/start - starta boten\n/help - visa tillgängliga kommandon\n/language - välj ditt språk",
+  "unknown_command": "Jag känner inte till det kommandot :(",
+  "choose_language": "Välj språk:",
+  "language_chosen": "Språk valt",
+  "language_saved": "✅ Språk sparat: %s",
+  "error_message": "Ett fel inträffade under förfrågan. Se till att du angav rätt stadsnamn.",
+  "city_not_found": "Stad \"%s\" hittades inte.",
+  "no_data": "Ingen data",
+  "temperature": "Temperatur",
+  "feels_like": "känns som",
+  "wind": "Vind",
+  "sunrise": "Soluppgång",
+  "sunset": "Solnedgång"
+}

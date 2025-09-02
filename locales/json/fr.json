@@ -1,0 +1,17 @@
+{
+  "empty_message": "S'il te plaît, envoie-moi un message texte avec le nom de l'endroit, mon pote..",
+  "start_message": "Ceci est un bot météo simple !\nVous pouvez rapidement obtenir des informations sur la météo dans le monde entier !\nEntrez simplement le nom de l'endroit où vous voulez connaître la météo.\nPar exemple, Paris",
+  "help_message": "Commandes disponibles :\n/start - démarrer le bot\n/help - afficher les commandes disponibles\n/language - choisir votre langue",
+  "unknown_command": "Je ne connais pas cette commande :(",
+  "choose_language": "Choisissez la langue :",
+  "language_chosen": "Langue choisie",
+  "language_saved": "✅ Langue enregistrée : %s",
+  "error_message": "Une erreur s'est produite lors de la requête. Assurez-vous d'avoir entré le nom correct de la ville.",
+  "city_not_found": "Ville \"%s\" introuvable.",
+  "no_data": "Aucune donnée",
+  "temperature": "Température",
+  "feels_like": "ressenti",
+  "wind": "Vent",
+  "sunrise": "Lever du soleil",
+  "sunset": "Coucher du soleil"
+}

@@ -1,0 +1,17 @@
+{
+  "empty_message": "请给我发一条包含地点名称的短信，兄弟..",
+  "start_message": "这是一个简单的天气机器人！\n您可以快速获取全球天气信息！\n只需输入您想知道天气的地点名称。\n例如，北京",
+  "help_message": "可用命令：\n/start - 启动机器人\n/help - 显示可用命令\n/language - 选择语言",
+  "unknown_command": "我不知道这个命令 :(",
+  "choose_language": "选择语言：",
+  "language_chosen": "语言已选择",
+  "language_saved": "✅ 语言已保存：%s",
+  "error_message": "请求过程中发生错误。请确保您输入了正确的城市名称。",
+  "city_not_found": "未找到城市 \"%s\"。",
+  "no_data": "无数据",
+  "temperature": "温度",
+  "feels_like": "体感温度",
+  "wind": "风",
+  "sunrise": "日出",
+  "sunset": "日落"
+}
