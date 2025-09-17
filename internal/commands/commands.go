@@ -7,7 +7,7 @@ import (
 	"github.com/tronget/weather-app-bot/internal/config"
 	"github.com/tronget/weather-app-bot/internal/ierrors"
 	"github.com/tronget/weather-app-bot/internal/locales"
-	"github.com/tronget/weather-app-bot/internal/weather/service"
+	"github.com/tronget/weather-app-bot/internal/weather/client"
 	"log"
 )
 
@@ -46,7 +46,7 @@ func HandleDefault(update *tgbotapi.Update, cfg *config.Config, lang string) str
 	userMessageText := update.Message.Text
 
 	username := update.Message.From.UserName
-	cityName, err := service.GetCorrectCityName(userMessageText, cfg)
+	cityName, err := client.GetCorrectCityName(userMessageText, cfg)
 
 	var replyMessageText string
 	var cityNotFoundError *ierrors.CityNotFoundError
@@ -60,7 +60,7 @@ func HandleDefault(update *tgbotapi.Update, cfg *config.Config, lang string) str
 		log.Printf("Error occurred during user request: %v", err)
 	default:
 		userLang := cfg.UserLanguage(username)
-		weather, err := service.GetWeatherInfo(cityName, cfg, userLang)
+		weather, err := client.GetWeatherInfo(cityName, cfg, userLang)
 		if err != nil {
 			replyMessageText = locales.Translate(locales.ERROR_MESSAGE, lang)
 			log.Printf("Error occurred during user request: %v", err)
