@@ -3,7 +3,7 @@ package models
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tronget/weather-app-bot/locales"
+	locales2 "github.com/tronget/weather-app-bot/internal/locales"
 	"time"
 )
 
@@ -58,7 +58,7 @@ func (s *Sys) UnmarshalJSON(b []byte) error {
 }
 
 func (weather *Weather) BuildMessage(lang string) string {
-	weatherDesc := locales.Translate(locales.NO_DATA, lang)
+	weatherDesc := locales2.Translate(locales2.NO_DATA, lang)
 	weatherEmoji := "🌤️"
 	if len(weather.DescriptionList) > 0 {
 		weatherDesc = weather.DescriptionList[0].Description
@@ -70,18 +70,18 @@ func (weather *Weather) BuildMessage(lang string) string {
 	sunset := weather.Sys.Sunset.In(loc).Format("15:04")
 
 	msg := fmt.Sprintf(
-		locales.WEATHER_MSG_FORMAT,
+		locales2.WEATHER_MSG_FORMAT,
 		weather.CityName, weather.Sys.Country,
 		weatherEmoji, weatherDesc,
-		locales.Translate(locales.TEMPERATURE, lang),
+		locales2.Translate(locales2.TEMPERATURE, lang),
 		weather.Temperature.Temp,
-		locales.Translate(locales.FEELS_LIKE, lang),
+		locales2.Translate(locales2.FEELS_LIKE, lang),
 		weather.Temperature.FeelsLike,
-		locales.Translate(locales.WIND, lang),
+		locales2.Translate(locales2.WIND, lang),
 		weather.Wind.Speed,
-		locales.Translate(locales.SUNRISE, lang),
+		locales2.Translate(locales2.SUNRISE, lang),
 		sunrise,
-		locales.Translate(locales.SUNSET, lang),
+		locales2.Translate(locales2.SUNSET, lang),
 		sunset,
 	)
 

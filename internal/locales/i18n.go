@@ -10,23 +10,10 @@ import (
 	"slices"
 )
 
-var availableLanguages = []string{
-	LANG_EN,
-	LANG_RU,
-	LANG_ES,
-	LANG_DE,
-	LANG_FR,
-	LANG_IT,
-	LANG_PT,
-	LANG_ZH,
-	LANG_SV,
-	LANG_FI,
-}
-
 var bundle *i18n.Bundle
 
 func InitI18n() {
-	files, err := os.ReadDir("locales/json")
+	files, err := os.ReadDir("internal/locales/json")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,7 +27,7 @@ func InitI18n() {
 			continue
 		}
 
-		_, err := b.LoadMessageFile("locales/json/" + file.Name())
+		_, err := b.LoadMessageFile("internal/locales/json/" + file.Name())
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -57,7 +44,7 @@ func newLocalizer(lang string) *i18n.Localizer {
 	if bundle == nil {
 		InitI18n()
 	}
-	if !slices.Contains(availableLanguages, lang) {
+	if !slices.Contains(AvailableLanguages, lang) {
 		lang = "en"
 	}
 	return i18n.NewLocalizer(bundle, lang)

@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/tronget/weather-app-bot/config"
-	"github.com/tronget/weather-app-bot/ierrors"
-	"github.com/tronget/weather-app-bot/locales"
-	"github.com/tronget/weather-app-bot/weather/service"
+	"github.com/tronget/weather-app-bot/internal/config"
+	"github.com/tronget/weather-app-bot/internal/ierrors"
+	"github.com/tronget/weather-app-bot/internal/locales"
+	"github.com/tronget/weather-app-bot/internal/weather/service"
 	"log"
 )
 
@@ -45,7 +45,7 @@ func HandleDefault(update *tgbotapi.Update, cfg *config.Config, lang string) str
 	// Name of the city passed by user
 	userMessageText := update.Message.Text
 
-	userID := update.Message.From.ID
+	username := update.Message.From.UserName
 	cityName, err := service.GetCorrectCityName(userMessageText, cfg)
 
 	var replyMessageText string
@@ -59,7 +59,7 @@ func HandleDefault(update *tgbotapi.Update, cfg *config.Config, lang string) str
 		replyMessageText = locales.Translate(locales.ERROR_MESSAGE, lang)
 		log.Printf("Error occurred during user request: %v", err)
 	default:
-		userLang := cfg.UserLanguage(userID)
+		userLang := cfg.UserLanguage(username)
 		weather, err := service.GetWeatherInfo(cityName, cfg, userLang)
 		if err != nil {
 			replyMessageText = locales.Translate(locales.ERROR_MESSAGE, lang)

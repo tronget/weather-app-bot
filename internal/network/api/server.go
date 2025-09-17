@@ -1,17 +1,16 @@
-package server
+package api
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tronget/weather-app-bot/config"
-	"github.com/tronget/weather-app-bot/pkg/api"
-	"github.com/tronget/weather-app-bot/weather/models"
+	"github.com/tronget/weather-app-bot/internal/config"
+	"github.com/tronget/weather-app-bot/internal/weather/models"
 	"io"
 	"net/http"
 )
 
 func GetCities(cityName string, cfg *config.Config) ([]models.City, error) {
-	url := api.RequestCityCoordinatesURL(cityName, cfg)
+	url := RequestCityCoordinatesURL(cityName, cfg)
 
 	data, err := getData[[]models.City](url)
 	if err != nil {
@@ -22,7 +21,7 @@ func GetCities(cityName string, cfg *config.Config) ([]models.City, error) {
 }
 
 func GetWeatherInfo(cityName string, cfg *config.Config, lang string) (*models.Weather, error) {
-	url := api.RequestWeatherURL(cityName, cfg, lang)
+	url := RequestWeatherURL(cityName, cfg, lang)
 
 	data, err := getData[models.Weather](url)
 	if err != nil {

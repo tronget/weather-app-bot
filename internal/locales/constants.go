@@ -13,6 +13,19 @@ const (
 	LANG_FI = "fi"
 )
 
+var AvailableLanguages = []string{
+	LANG_EN,
+	LANG_RU,
+	LANG_ES,
+	LANG_DE,
+	LANG_FR,
+	LANG_IT,
+	LANG_PT,
+	LANG_ZH,
+	LANG_SV,
+	LANG_FI,
+}
+
 const (
 	EMPTY_MESSAGE  = "empty_message"
 	UNKNOWN_CMD    = "unknown_command"

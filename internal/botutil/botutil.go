@@ -3,10 +3,12 @@ package botutil
 import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/tronget/weather-app-bot/commands"
-	"github.com/tronget/weather-app-bot/config"
-	"github.com/tronget/weather-app-bot/locales"
+	"github.com/tronget/weather-app-bot/internal/commands"
+	"github.com/tronget/weather-app-bot/internal/config"
+	"github.com/tronget/weather-app-bot/internal/locales"
+	"github.com/tronget/weather-app-bot/internal/network/db"
 	"log"
+	"slices"
 	"strings"
 )
 
@@ -22,11 +24,14 @@ func Init(cfg *config.Config) (*tgbotapi.BotAPI, error) {
 func HandleMsg(cfg *config.Config, update *tgbotapi.Update, msgConfig *tgbotapi.MessageConfig) {
 	messageText := update.Message.Text
 
-	userLang := cfg.UserLanguage(update.Message.From.ID)
-	fmt.Println(userLang)
-	if userLang == "" {
+	username := update.Message.From.UserName
+	userLang := cfg.UserLanguage(username)
+
+	log.Printf("Getting message from user \"%s\". Message: \"%s\"", username, messageText)
+
+	if !slices.Contains(locales.AvailableLanguages, userLang) {
 		userLang = update.Message.From.LanguageCode
-		cfg.SetUserLanguage(update.Message.From.ID, userLang)
+		cfg.SetUserLanguage(username, userLang)
 	}
 
 	var replyMessageText string
@@ -42,6 +47,7 @@ func HandleMsg(cfg *config.Config, update *tgbotapi.Update, msgConfig *tgbotapi.
 	}
 
 	msgConfig.Text = replyMessageText
+	log.Printf("Sending message to user \"%s\". Message: \"%s\"", username, replyMessageText)
 }
 
 func SendMessage(bot *tgbotapi.BotAPI, msg *tgbotapi.MessageConfig, update *tgbotapi.Update) {
@@ -74,8 +80,8 @@ func HandleCallback(bot *tgbotapi.BotAPI, callback *tgbotapi.CallbackQuery, cfg 
 	if strings.HasPrefix(callback.Data, "lang_") {
 		lang := strings.TrimPrefix(callback.Data, "lang_")
 
-		// TODO: save lang in database, not in-memory
-		cfg.SetUserLanguage(callback.From.ID, lang)
+		db.SetUserLanguage(callback.From.UserName, lang)
+		cfg.SetUserLanguage(callback.From.UserName, lang)
 
 		// Respond to the callback query, telling Telegram to show the user
 		// a message with the data received.
