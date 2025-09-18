@@ -4,20 +4,21 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"os"
 )
 
 var dbInstance *sql.DB
 
 type DatabaseConfig struct {
 	host     string
-	port     int
+	port     string
 	user     string
 	password string
 	dbname   string
 	DB       *sql.DB
 }
 
-func NewDatabase(user, host string, port int, dbname, password string) *DatabaseConfig {
+func NewDatabase(user, host, port, dbname, password string) *DatabaseConfig {
 	db := &DatabaseConfig{
 		user:     user,
 		host:     host,
@@ -30,7 +31,7 @@ func NewDatabase(user, host string, port int, dbname, password string) *Database
 }
 
 func (db *DatabaseConfig) Connect() error {
-	connStr := fmt.Sprintf("user=%s host=%s port=%d dbname=%s password=%s sslmode=disable", db.user, db.host, db.port, db.dbname, db.password)
+	connStr := fmt.Sprintf("user=%s host=%s port=%s dbname=%s password=%s sslmode=disable", db.user, db.host, db.port, db.dbname, db.password)
 	dbProxy, err := sql.Open("postgres", connStr)
 
 	if err != nil {
@@ -55,15 +56,20 @@ func (db *DatabaseConfig) Close() {
 	}
 }
 
+// getDatabase returns a singleton instance of the database connection
 func getDatabase() (*sql.DB, error) {
 	if dbInstance == nil {
-		db := NewDatabase(
-			"tronget",
-			"localhost",
-			5432,
-			"weather_app_bot",
-			"postgres",
-		)
+		user := os.Getenv("DB_USER")
+		host := os.Getenv("DB_HOST")
+		port := os.Getenv("DB_PORT")
+		dbname := os.Getenv("DB_NAME")
+		password := os.Getenv("DB_PASSWORD")
+
+		if user == "" || host == "" || port == "" || dbname == "" || password == "" {
+			return nil, fmt.Errorf("database configuration is not set properly in environment variables")
+		}
+
+		db := NewDatabase(user, host, port, dbname, password)
 
 		if err := db.Connect(); err != nil {
 			return nil, fmt.Errorf("database connection failed: %w", err)
@@ -73,6 +79,14 @@ func getDatabase() (*sql.DB, error) {
 	}
 
 	return dbInstance, nil
+}
+
+// CloseDatabase closes the global database connection
+func CloseDatabase() {
+	if dbInstance != nil {
+		dbInstance.Close()
+		dbInstance = nil
+	}
 }
 
 // ConnectionAvailability checks if database connection is available

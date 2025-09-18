@@ -5,13 +5,16 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/tronget/weather-app-bot/internal/botutil"
 	"github.com/tronget/weather-app-bot/internal/config"
+	"github.com/tronget/weather-app-bot/internal/network/db"
 	"log"
 )
 
 func main() {
+	// close the global database connection when the main function ends
+	defer db.CloseDatabase()
 
 	if err := godotenv.Load(); err != nil {
-		log.Fatalln("No .env file found")
+		log.Panicf("No .env file found")
 	}
 
 	cfg, err := config.Load()

@@ -13,9 +13,29 @@ import (
 var bundle *i18n.Bundle
 
 func InitI18n() {
-	files, err := os.ReadDir("internal/locales/json")
+	// Try multiple possible paths for the locales directory
+	possiblePaths := []string{
+		"internal/locales/json",       // For local development
+		"./internal/locales/json",     // Alternative local path
+		"/app/internal/locales/json",  // Docker build context path
+		"/root/internal/locales/json", // Docker runtime path
+	}
+
+	var localesPath string
+	var files []os.DirEntry
+	var err error
+
+	// Find the correct path that exists
+	for _, path := range possiblePaths {
+		files, err = os.ReadDir(path)
+		if err == nil {
+			localesPath = path
+			break
+		}
+	}
+
 	if err != nil {
-		log.Fatal(err)
+		log.Panicf("Could not find locales directory in any of the expected paths: %v. Error: %v", possiblePaths, err)
 	}
 
 	b := i18n.NewBundle(language.English)
@@ -27,13 +47,15 @@ func InitI18n() {
 			continue
 		}
 
-		_, err := b.LoadMessageFile("internal/locales/json/" + file.Name())
+		filePath := filepath.Join(localesPath, file.Name())
+		_, err := b.LoadMessageFile(filePath)
 		if err != nil {
-			log.Fatal(err)
+			log.Panicf("Failed to load translation file %s: %v", filePath, err)
 		}
 	}
 
 	bundle = b
+	log.Printf("Successfully loaded %d translation files", len(files))
 }
 
 func isJSON(fileName string) bool {

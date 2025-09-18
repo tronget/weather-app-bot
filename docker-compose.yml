@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: weather-bot-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: weather_app_bot
+      POSTGRES_USER: tronget
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+#    ports:
+#      - "5432:5432"
+    networks:
+      - weather-bot-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tronget -d weather_app_bot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  weather-bot:
+    build: .
+    container_name: weather-bot-app
+    restart: unless-stopped
+    environment:
+      # Telegram and Weather API keys
+      TELEGRAM_APIKEY: ${TELEGRAM_APIKEY}
+      OPENWEATHER_APIKEY: ${OPENWEATHER_APIKEY}
+      
+      # Database configuration
+      DB_USER: tronget
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: weather_app_bot
+      DB_PASSWORD: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - weather-bot-network
+    volumes:
+      - ./logs:/root/logs
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  weather-bot-network:
+    driver: bridge
