@@ -1,148 +1,143 @@
-# Weather Bot Docker Setup
+# Weather Bot — Docker Setup
 
-This guide explains how to run the Weather Bot application using Docker.
+This guide explains how to run the Weather Bot application using Docker with environment variables managed via a local `.env` file.
 
 ## Prerequisites
 
-- Docker and Docker Compose installed on your system
-- API keys for Telegram Bot and OpenWeather API
+- Docker and Docker Compose installed
+- Telegram Bot token
+- OpenWeather API key
 
-## Quick Start
+## Quick start
 
-1. **Clone and navigate to the project:**
-   ```bash
-   cd /path/to/weather-app-bot
-   ```
-
-2. **Configure environment variables:**
-   Update the `.env` file with your API keys:
-   ```env
-   TELEGRAM_APIKEY=your_telegram_bot_token_here
-   OPENWEATHER_APIKEY=your_openweather_api_key_here
-   ```
-
-3. **Start the application:**
-   ```bash
-   make up
-   # or
-   docker-compose up -d
-   ```
-
-4. **Check logs:**
-   ```bash
-   make logs
-   # or
-   docker-compose logs -f weather-bot
-   ```
-
-## Available Commands
-
-### Using Makefile (Recommended)
-- `make build` - Build the Docker images
-- `make up` - Start the application and database
-- `make down` - Stop and remove containers
-- `make restart` - Restart the application
-- `make logs` - Show application logs
-- `make db-logs` - Show database logs
-- `make shell` - Access application container shell
-- `make clean` - Remove all containers, images, and volumes
-- `make rebuild` - Clean build and start
-
-### Using Docker Compose Directly
-- `docker-compose build` - Build images
-- `docker-compose up -d` - Start services in background
-- `docker-compose down` - Stop services
-- `docker-compose logs -f weather-bot` - Follow application logs
-- `docker-compose logs -f postgres` - Follow database logs
-
-## Architecture
-
-The application consists of two services:
-
-### 1. PostgreSQL Database (`postgres`)
-- **Image:** postgres:15-alpine
-- **Port:** 5432
-- **Database:** weather_app_bot
-- **Initialization:** Automatically creates tables from `init.sql`
-- **Data persistence:** Uses Docker volume `postgres_data`
-
-### 2. Weather Bot Application (`weather-bot`)
-- **Built from:** Dockerfile (multi-stage Go build)
-- **Depends on:** PostgreSQL service
-- **Environment:** Production-ready Alpine Linux container
-
-## Database Schema
-
-The application automatically creates the following table:
-
-```sql
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(255) UNIQUE NOT NULL,
-    lang_code VARCHAR(10) NOT NULL DEFAULT 'en',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+1) Clone and enter the project
+```bash
+git clone https://github.com/tronget/weather-app-bot.git
+cd weather-app-bot
 ```
 
-## Environment Variables
+2) Create your local environment file
+```bash
+cp .env.example .env
+```
 
-The application uses these environment variables:
+3) Edit `.env` and set your secrets and configuration
+- TELEGRAM_APIKEY
+- OPENWEATHER_APIKEY
+- DB_* values (optional if you’re okay with the defaults)
+- DB_NETWORK should stay as `weather-bot-network` unless you change the compose network name
 
-### API Configuration
-- `TELEGRAM_APIKEY` - Your Telegram Bot API token
-- `OPENWEATHER_APIKEY` - Your OpenWeather API key
+4) Start the stack
+```bash
+make up
+# or
+docker compose up -d
+# (older CLI)
+docker-compose up -d
+```
 
-### Database Configuration (Docker)
-- `DB_USER` - Database username (default: tronget)
-- `DB_HOST` - Database hostname (default: postgres)
-- `DB_PORT` - Database port (default: 5432)
-- `DB_NAME` - Database name (default: weather_app_bot)
-- `DB_PASSWORD` - Database password (default: postgres)
+5) Follow logs
+```bash
+make logs
+# or
+docker compose logs -f weather-bot
+# (older CLI)
+docker-compose logs -f weather-bot
+```
+
+## How it works
+
+The stack includes:
+- PostgreSQL (service: `postgres`)
+   - Image: `postgres:15-alpine`
+   - Initializes from `init.sql` if present
+   - Persists data in the `postgres_data` volume
+- Weather Bot (service: `weather-bot`)
+   - Built from the project `Dockerfile` (multi-stage Go build)
+   - Waits for the database to become healthy before starting
+
+Docker Compose automatically loads variables from the project’s `.env` file and injects them into services via `environment:`.
+
+## Environment variables
+
+Copy `.env.example` to `.env` and adjust as needed. Key variables:
+
+- API
+   - TELEGRAM_APIKEY — Telegram Bot token
+   - OPENWEATHER_APIKEY — OpenWeather API key
+- Database
+   - DB_USER — database username (default: `default_user`)
+   - DB_PASSWORD — database password (default: `default_password`)
+   - DB_HOST — database hostname (default: `postgres`)
+   - DB_PORT — database port (default: `5432`)
+   - DB_NAME — database name (default: `weather_app_bot`)
+   - DB_NETWORK — compose network name (default: `weather-bot-network`, must match the defined network in docker-compose.yml)
+
+
+## Make targets (recommended)
+
+- make build — Build images
+- make up — Start the stack in the background
+- make down — Stop and remove containers
+- make restart — Restart the app
+- make logs — Tail app logs
+- make db-logs — Tail database logs
+- make shell — Shell into the app container
+- make clean — Remove containers, images, and volumes
+- make rebuild — Clean build and start
+
+## Common Docker Compose commands
+
+- docker compose build — Build images
+- docker compose up -d — Start services
+- docker compose down — Stop services
+- docker compose ps — Show service status
+- docker compose logs -f weather-bot — Follow app logs
+- docker compose logs -f postgres — Follow DB logs
+
+(If your Docker uses the legacy plugin, replace `docker compose` with `docker-compose`.)
+
+## Database initialization
+
+If `init.sql` is present in the project root, it will be mounted and executed at first database startup to create/seed required structures. Update `init.sql` as your schema evolves—no schema is hardcoded in the application or docs.
+
+Access the database:
+```bash
+docker compose exec postgres psql -U "${DB_USER}" -d "${DB_NAME}"
+# (older CLI)
+docker-compose exec postgres psql -U "${DB_USER}" -d "${DB_NAME}"
+```
 
 ## Troubleshooting
 
-### Check Service Status
-```bash
-docker-compose ps
-```
+- Check service status
+  ```bash
+  docker compose ps
+  # or
+  docker-compose ps
+  ```
 
-### View All Logs
-```bash
-docker-compose logs
-```
+- View all logs
+  ```bash
+  docker compose logs
+  # or
+  docker-compose logs
+  ```
 
-### Restart Services
-```bash
-make restart
-```
+- Restart services
+  ```bash
+  make restart
+  ```
 
-### Access Database
-```bash
-docker-compose exec postgres psql -U tronget -d weather_app_bot
-```
+- Reset the database (removes data)
+  ```bash
+  docker compose down -v
+  docker compose up -d
+  # or
+  docker-compose down -v
+  docker-compose up -d
+  ```
 
-### Clean Installation
-```bash
-make clean
-make up
-```
+## Development (without Docker)
 
-## Development
-
-For local development without Docker, use the legacy environment variables in `.env`:
-- `DATABASE_HOST=localhost`
-- `DATABASE_USER`, `DATABASE_PASSWORD`, etc.
-
-## Health Checks
-
-The PostgreSQL service includes health checks to ensure the database is ready before starting the application. The weather-bot service will wait for the database to be healthy before starting.
-
-## Data Persistence
-
-Database data is persisted in a Docker volume named `postgres_data`. To completely reset the database:
-
-```bash
-docker-compose down -v  # This removes volumes
-docker-compose up -d
-```
+You can run the app locally by exporting the same variables you see in `.env.example` (or by creating a `.env` that your local tooling loads). Ensure you point DB_* to your local database instance.
