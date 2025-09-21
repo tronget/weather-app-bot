@@ -2,7 +2,7 @@
 -- CREATE DATABASE weather_app_bot;
 
 -- Connect to the database
-\c weather_app_bot;
+\c ${DB_NAME};
 
 -- Create users table
 CREATE TABLE IF NOT EXISTS users (

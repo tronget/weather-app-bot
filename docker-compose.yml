@@ -6,19 +6,17 @@ services:
     container_name: weather-bot-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: weather_app_bot
-      POSTGRES_USER: tronget
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-#    ports:
-#      - "5432:5432"
     networks:
-      - weather-bot-network
+      - ${DB_NETWORK}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tronget -d weather_app_bot"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,16 +31,16 @@ services:
       OPENWEATHER_APIKEY: ${OPENWEATHER_APIKEY}
       
       # Database configuration
-      DB_USER: tronget
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: weather_app_bot
-      DB_PASSWORD: postgres
+      DB_USER: ${DB_USER}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - weather-bot-network
+      - ${DB_NETWORK}
     volumes:
       - ./logs:/root/logs
 

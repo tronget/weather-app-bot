@@ -2,12 +2,12 @@ package api
 
 import (
 	"fmt"
-	config2 "github.com/tronget/weather-app-bot/internal/config"
+	"github.com/tronget/weather-app-bot/internal/config"
 	"strings"
 )
 
-func RequestCityCoordinatesURL(cityName string, cfg *config2.Config) string {
-	addressFormat := config2.COORDINATES_REQUEST_URL
+func RequestCityCoordinatesURL(cityName string, cfg *config.Config) string {
+	addressFormat := config.COORDINATES_REQUEST_URL
 	token := cfg.WeatherToken()
 
 	// replace spaces to make correct request
@@ -16,8 +16,8 @@ func RequestCityCoordinatesURL(cityName string, cfg *config2.Config) string {
 	return address
 }
 
-func RequestWeatherURL(cityName string, cfg *config2.Config, lang string) string {
-	addressFormat := config2.WEATHER_REQUEST_URL
+func RequestWeatherURL(cityName string, cfg *config.Config, lang string) string {
+	addressFormat := config.WEATHER_REQUEST_URL
 	token := cfg.WeatherToken()
 
 	// replace spaces to make correct request
